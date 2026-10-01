@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notes App</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 16px; }
+    form.add { display: flex; gap: 8px; margin-bottom: 24px; }
+    input[type=text] { flex: 1; padding: 10px; }
+    button { padding: 10px 14px; cursor: pointer; }
+    .note { display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #ddd; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; }
+    .meta { color: #888; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>My Notes</h1>
+
+  <form class="add" action="{{ url_for('add') }}" method="post">
+    <input type="text" name="content" placeholder="Write a note..." maxlength="500" required>
+    <button type="submit">Add</button>
+  </form>
+
+  {% for note in notes %}
+    <div class="note">
+      <div>
+        <div>{{ note.content }}</div>
+        <div class="meta">{{ note.created_at.strftime('%d %b %Y, %H:%M') }} UTC</div>
+      </div>
+      <form action="{{ url_for('delete', note_id=note.id) }}" method="post">
+        <button type="submit">Delete</button>
+      </form>
+    </div>
+  {% else %}
+    <p>No notes yet.</p>
+  {% endfor %}
+</body>
+</html>
