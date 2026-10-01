@@ -14,7 +14,11 @@ if not (user and repo and token):
 
 url = f"https://{user}:{token}@github.com/{user}/{repo}.git"
 
-subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", "Update"])
-subprocess.run(["git", "branch", "-M", "main"])
-subprocess.run(["git", "push", url, "main"], check=True)
+for cmd in (
+    ["git", "init"],
+    ["git", "add", "."],
+    ["git", "commit", "-m", "Update"],
+    ["git", "branch", "-M", "main"],
+    ["git", "push", url, "main"],
+):
+    subprocess.run(cmd)
