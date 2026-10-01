@@ -19,5 +19,5 @@ for cmd in (
     ["git", "branch", "-M", "main"],
     ["git", "push", "-u", "origin", "main"],
 ):
-    subprocess.run(cmd, check=True)
+    subprocess.run(cmd)
     
