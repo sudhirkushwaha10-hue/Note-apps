@@ -4,3 +4,4 @@ venv/
 *.pvc
 *.db
 instances/
+*.env/
