@@ -11,33 +11,34 @@ env:
     CLUSTER: notes-app-cluster
 
 jobs:
-    deploy: runs-on: ubuntu-latest
-    permissions:
-        contents: read
-        id-token: write
-    env:
-        IMAGE: us-central1-docker.pkg.dev/notes-app-510404/notes-app:${{ github.sha }}
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-        - name: Authenticate
-          uses: google-github-actions/auth@v1
-          with:
-            workload_identity_provider: projects/510404/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-            service_account: github-deployer@notes-app-510404.iam.gserviceaccount.com
+    deploy:
+         runs-on: ubuntu-latest
+         permissions:
+            contents: read
+            id-token: write
+         env:
+            IMAGE: us-central1-docker.pkg.dev/notes-app-510404/notes-app:${{ github.sha }}
+         steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Authenticate
+              uses: google-github-actions/auth@v1
+              with:
+                workload_identity_provider: projects/510404/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+                service_account: github-deployer@notes-app-510404.iam.gserviceaccount.com
 
-        - uses: google-github-actions/setup-gcloud@v2
-          
-        - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quite
+            - uses: google-github-actions/setup-gcloud@v2
+            
+            - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quite
 
-        - run:
-            docker build -t $IMAGE .
-            docker push $IMAGE
-        - uses: google-github-actions/get-gke-credentials@v2
-          with:
-            cluster_name: ${{ notes-cluster }}
-            location: ${{ us-central1 }}
+            - run:
+                docker build -t $IMAGE .
+                docker push $IMAGE
+            - uses: google-github-actions/get-gke-credentials@v2
+              with:
+                cluster_name: ${{ notes-cluster }}
+                location: ${{ us-central1 }}
 
-        - run:
-            kubectl set image deployment/notes-app notes-app=$IMAGE
-            kubectl rollout status deployment/notes-app  --timeout=120s
+            - run:
+                kubectl set image deployment/notes-app notes-app=$IMAGE
+                kubectl rollout status deployment/notes-app  --timeout=120s
