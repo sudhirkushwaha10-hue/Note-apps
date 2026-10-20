@@ -4,7 +4,7 @@ metadata:
   name: notes-app
   
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: notes-app
@@ -23,6 +23,25 @@ spec:
               path: /health
               port: 5000
             initialDelaySeconds: 5
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DATABASE_URL
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
+          args:
+            - "--port=5432"
+            - "notes-app-510404:us-central1:notes-db"
           resources:
             requests:
               memory: "64Mi"
